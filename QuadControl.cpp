@@ -256,26 +256,24 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
 
   velCmd += kpPos * (posCmd - pos);
     
-  velCmd.x = CONSTRAIN(velCmd.x, - maxSpeedXY, maxSpeedXY);
-  velCmd.y = CONSTRAIN(velCmd.y, -maxSpeedXY, maxSpeedXY);
+  //velCmd.x = CONSTRAIN(velCmd.x, - maxSpeedXY, maxSpeedXY);
+  //velCmd.y = CONSTRAIN(velCmd.y, -maxSpeedXY, maxSpeedXY);
     
-//  V3F cappedVel_cmd;
-//  if (velCmd.mag() > maxSpeedXY){
-//      cappedVel_cmd = velCmd.norm() * maxSpeedXY;
-//  }else{
-//      cappedVel_cmd = velCmd;
-//  }
+  if (velCmd.mag() > maxSpeedXY){
+      velCmd = velCmd.norm() * maxSpeedXY;
+  }
+    
   V3F posDelta = posCmd - pos;
   V3F velDelta = velCmd - vel;
 
   accelCmd += kpPos * posDelta + kpVel * velDelta;
   //accelCmd.y = kpPosXY * posDelta.y + kpVelXY * velDelta.y+ accelCmd.y;
 
-//  if (accelCmd.mag() > maxAccelXY){
-//      accelCmd = accelCmd.norm() * maxAccelXY;
-//  }
-  accelCmd.x = CONSTRAIN(accelCmd.x, -maxAccelXY , maxAccelXY);
-  accelCmd.y = CONSTRAIN(accelCmd.y, -maxAccelXY, maxAccelXY);
+  if (accelCmd.mag() > maxAccelXY){
+      accelCmd = accelCmd.norm() * maxAccelXY;
+  }
+  //accelCmd.x = CONSTRAIN(accelCmd.x, -maxAccelXY , maxAccelXY);
+  //accelCmd.y = CONSTRAIN(accelCmd.y, -maxAccelXY, maxAccelXY);
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   return accelCmd;
