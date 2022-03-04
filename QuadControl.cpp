@@ -155,9 +155,6 @@ V3F QuadControl::RollPitchControl(V3F accelCmd, Quaternion<float> attitude, floa
       float c_d = - collThrustCmd / mass;
       float bxCmd  = CONSTRAIN(accelCmd.x / c_d, -sin(maxTiltAngle), sin(maxTiltAngle));
       float byCmd = CONSTRAIN(accelCmd.y / c_d , -sin(maxTiltAngle), sin(maxTiltAngle));
-      
-      //float bxCmd = accelCmd.x / c_d;
-      //float byCmd = accelCmd.y / c_d;
 
       float bxdotCmd = kpBank * (bxCmd - R13);
       float bydotCmd = kpBank * (byCmd - R23);
@@ -199,7 +196,6 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
   float R33 = R(2,2);
-  //velZCmd = CONSTRAIN(velZCmd, - maxAscentRate, maxDescentRate);
   
   float posZDelta = posZCmd - posZ;
   integratedAltitudeError += posZDelta * dt;
@@ -211,7 +207,6 @@ float QuadControl::AltitudeControl(float posZCmd, float velZCmd, float posZ, flo
   float ubar = kpPosZ * posZDelta + kpVelZ * velZDelta + accelZCmd + KiPosZ * integratedAltitudeError;
   float a = - CONSTRAIN((ubar - CONST_GRAVITY) / R33, - maxDescentRate / dt, maxAscentRate /dt);
   thrust = mass * a;
-  //thrust = CONSTRAIN( thrust , 4 * maxMotorThrust , 4 * minMotorThrust);
  
   /////////////////////////////// END STUDENT CODE ////////////////////////////
   return thrust;
@@ -245,7 +240,6 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
   // Make sure to _add_, not simply replace, the result of your controller
   // to this variable
   V3F accelCmd = accelCmdFF;
-    
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
   V3F kpPos;
   kpPos.x = kpPosXY;
@@ -258,27 +252,17 @@ V3F QuadControl::LateralPositionControl(V3F posCmd, V3F velCmd, V3F pos, V3F vel
   kpVel.z = 0.f;
 
   velCmd += kpPos * (posCmd - pos);
-    
-  //velCmd.x = CONSTRAIN(velCmd.x, - maxSpeedXY, maxSpeedXY);
-  //velCmd.y = CONSTRAIN(velCmd.y, -maxSpeedXY, maxSpeedXY);
-    
   if (velCmd.mag() > maxSpeedXY){
       velCmd = velCmd.norm() * maxSpeedXY;
   }
-    
   V3F posDelta = posCmd - pos;
   V3F velDelta = velCmd - vel;
-
   accelCmd += kpPos * posDelta + kpVel * velDelta;
-  //accelCmd.y = kpPosXY * posDelta.y + kpVelXY * velDelta.y+ accelCmd.y;
 
   if (accelCmd.mag() > maxAccelXY){
       accelCmd = accelCmd.norm() * maxAccelXY;
   }
-  //accelCmd.x = CONSTRAIN(accelCmd.x, -maxAccelXY , maxAccelXY);
-  //accelCmd.y = CONSTRAIN(accelCmd.y, -maxAccelXY, maxAccelXY);
   /////////////////////////////// END STUDENT CODE ////////////////////////////
-
   return accelCmd;
 }
 
